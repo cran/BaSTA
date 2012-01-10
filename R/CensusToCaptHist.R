@@ -1,5 +1,5 @@
 CensusToCaptHist <-
-function(ID, d, dformat="dd/mm/yyyy"){
+function(ID,d,dformat="dd/mm/yyyy"){
 
 # Check data
 if(class(ID) != "character") ID = as.character(ID)
@@ -12,10 +12,10 @@ if(class(d) == "Date") {yr = as.numeric(format(d, format = "%Y")) }
 if(class(d) != "Date"){
     # Deduce the d format, if it is not already a d object
     st = strsplit(dformat, split = NULL)
-    y  = which(st[[1]] == "y")
+    y  = which(st[[1]]=="y")
 
     # Extract the year
-    yr = as.numeric(substr(d, y[1], y[length(y)]))
+    yr = as.numeric(substr(d,y[1],y[length(y)]))
     }
 
 
@@ -27,6 +27,9 @@ yr  = c(yr,dyr)
 
 mat        = as.matrix(table(ID,yr))
 mat[mat>0] = 1
+ID         = rownames(mat)
+mat        = as.data.frame(cbind(as.factor(ID), as.matrix(mat)))
+colnames(mat) = c("ID", colnames(mat)[-1])
 
 #Remove the dummy row
 mat        = mat[-which(rownames(mat)=="XdummyX"),]

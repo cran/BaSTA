@@ -17,7 +17,7 @@ basta(object, \dots)
          thetaStart = NULL, thetaJumps = NULL, thetaPriors = NULL, 
          gammaStart = NULL, gammaJumps = NULL, gammaPriors = NULL, 
          nsim = 1, parallel = FALSE, ncpus = 2, lifeTable = TRUE, 
-         progrPlots = FALSE, \dots)
+         progrPlots = FALSE, updateJumps = TRUE, \dots)
 }
 
 \arguments{
@@ -88,7 +88,10 @@ basta(object, \dots)
   
 \item{progrPlots }{A logical argument indicating wheter to draw progress plots or not. If \code{TRUE}, small plots are displayed showing the percent progress achieved for each MCMC simulation. }
   
+
+\item{updateJumps }{A logical argument indicating wheter to update jumps until an update rate of 0.2 is achieved. }
   
+
 \item{\dots }{Ignored.}
 }
 
@@ -155,11 +158,11 @@ As described above, the number of parameters for the \code{gammaStart} argument 
   
 \item{coefficients }{A matrix with estimated coefficients (i.e. mean values per parameter on the thinned sequences after burnin), which includes standard errors, upper and lower 95\% credible intervals, update rates per parameter (commonly the same for all survival and proportional hazards parameters), serial autocorrelation on the thinned sequences and the potential scale reduction factor for convergence (see \code{Convergence} value below). }
 	
-\item{modSel }{Basic deviance information criterion (DIC) calculations to be used for model selection (Spiegelhalter \emph{et al.} 2002). These values should only be used a reference (see comments in Spiegelhalter \emph{et al.} 2002). A future version of the package will include routines for reversible jump Markov Chain Monte Carlo (RJMCMC, see King & Brooks 2002). If all or some of the simulations failed, then the returned value is \code{NULL}.}
+\item{DIC }{Basic deviance information criterion (DIC) calculations to be used for model selection (Spiegelhalter \emph{et al.} 2002). These values should only be used a reference (see comments in Spiegelhalter \emph{et al.} 2002). A future version of the package will include routines for reversible jump Markov Chain Monte Carlo (RJMCMC, see King & Brooks 2002). If all or some of the simulations failed, then the returned value is \code{NULL}.}
 	
 \item{Convergence }{If requested, a matrix with convergence coefficients based on potential scale reduction as described by Gelman \emph{et al.} (2004). If only one simulation was ran, then the returned value is \code{NULL}.}
   
-\item{KullbackLiebler }{If called by \code{\link{summary}}, list with Kullback-Liebler discrepancy matrices between pair of parameters for categorical covariates (McCulloch 1989, Burnham and Anderson 2001) and McCulloch's (1989) calibration measure. If only one simulation was ran or if no convergence is reached, then the returned value is \code{NULL}.}
+\item{KullbackLeibler }{If called by \code{\link{summary}}, list with Kullback-Leibler discrepancy matrices between pair of parameters for categorical covariates (McCulloch 1989, Burnham and Anderson 2001) and McCulloch's (1989) calibration measure. If only one simulation was ran or if no convergence is reached, then the returned value is \code{NULL}.}
   
 \item{settings }{If called by \code{\link{summary}}, this is a vector indicating the number of iterations for each MCMC, the burn in sequence, the thinning interval, and the number of simulations that were run.}
 	
@@ -197,7 +200,7 @@ As described above, the number of parameters for the \code{gammaStart} argument 
   
 \item{finished }{Vector of binary values indicating which simulations ran to the end.}
   
-\item{lifetable }{If requested and specified in the argument \code{lifetable}, a cohort life table calculated from the estimated ages at death.}
+\item{lifeTable }{If requested and specified in the argument \code{lifeTable}, a cohort life table calculated from the estimated ages at death.}
   
 \item{lambda }{If argument \code{minAge} is larger than 0 and if requested, matrix with lambda parameter estimates for early changes in distribution of ages at death.}
 }
