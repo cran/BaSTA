@@ -6,7 +6,7 @@ Parametric Bayesian estimation of age-specific survival for left-truncated and r
 }
 
 \description{
-This function performs multiple Markov Chain Monte Carlo (MCMC) algorithms for the Bayesian estimation of age-specific mortality and survival trends when a large proportion of (or all) records have unknown times of birth and/or death. Survival parameters and unknown (i.e. latent) birth and death times are estimated, allowing the user to test a range of mortality patterns, and to test the effect of continuous and/or discrete covariates following Colchero and Clark's (2011) approach.}
+This function performs multiple Markov Chain Monte Carlo (MCMC) algorithms for the Bayesian estimation of age-specific mortality and survival trends when a large proportion of (or all) records have unknown times of birth and/or death. Survival parameters and unknown (i.e. latent) birth and death times are estimated, allowing the user to test a range of mortality patterns, and to test the effect of continuous and/or discrete covariates following Colchero and Clark's (2012) approach.}
 
 \usage{
 basta(object, \dots)
@@ -65,7 +65,7 @@ basta(object, \dots)
 \item{thetaPriors }{A vector defining the priors for each survival parameter. The vector takes the same format as described for \code{thetaStart}. As with \code{thetaStart}, the default is set to \code{NULL} and thus default values are assigned (i.e. all equal to 0).}
   
   
-\item{gammaStart }{A vector of initial parameters for the proportional hazards section of the model. These can be specified when \code{Prop.Hazards} is \code{TRUE} or when continuous covariates are evaluated (see \code{details}). As with \code{thetaStart}, the default is set to \code{NULL} and thus default values are assigned (i.e. all equal to 0).}
+\item{gammaStart }{A vector of initial parameters for the proportional hazards section of the model. These can be specified when \code{Prop.Hazards} is \code{TRUE} or when continuous covariates are evaluated under a \dQuote{\code{fused}} covariate structure (see \code{details}). As with \code{thetaStart}, the default is set to \code{NULL} and thus default values are assigned (i.e. all equal to 0).}
   
   
 \item{gammaJumps }{A vector of jump standard errors for the proportional hazards parameters. The number of jumps will be equal to the number of covariates when the argument \code{covarsStruct} is set to \dQuote{\code{prop.haz}}, or to the number of continuous covariates to be evaluated when \code{covarsStruct} is set to \dQuote{\code{fused}}. In case any of these two conditions are met and the default is used (i.e. NULL), the model automatically assigns built-in jump values.}
@@ -153,9 +153,7 @@ The number of parameters in \code{thetaStart} is a vector or matrix that defines
 As described above, the number of parameters for the \code{gammaStart} argument (i.e. section b), namely the proportional hazards section, will be a function of the number of continuous covariates if argument \code{covarsStruct} is \dQuote{\code{fused}}, or to the total number of covariates when \code{covarsStruct} is \dQuote{\code{prop.haz}}.
 }
 
-\value{
-
-  
+\value{  
 \item{coefficients }{A matrix with estimated coefficients (i.e. mean values per parameter on the thinned sequences after burnin), which includes standard errors, upper and lower 95\% credible intervals, update rates per parameter (commonly the same for all survival and proportional hazards parameters), serial autocorrelation on the thinned sequences and the potential scale reduction factor for convergence (see \code{Convergence} value below). }
 	
 \item{DIC }{Basic deviance information criterion (DIC) calculations to be used for model selection (Spiegelhalter \emph{et al.} 2002). These values should only be used a reference (see comments in Spiegelhalter \emph{et al.} 2002). A future version of the package will include routines for reversible jump Markov Chain Monte Carlo (RJMCMC, see King & Brooks 2002). If all or some of the simulations failed, then the returned value is \code{NULL}.}
@@ -208,9 +206,9 @@ As described above, the number of parameters for the \code{gammaStart} argument 
 \references{
 Burnham, K.P. and Anderson, D.R. (2001) Kullback-Leibler information as a basis for strong inference in ecological studies. \emph{Widlife Research}, 28, 111-119.
 
-Colchero, F. and Clark, J.S. (2011) Bayesian inference on age-specific survival from capture-recapture data for censored and truncated data. \emph{Journal of Animal Ecology}, DOI: 10.1111/j.1365-2656.2011.01898.x
+Colchero, F. and J.S. Clark (2012) Bayesian inference on age-specific survival from capture-recapture data for censored and truncated data. \emph{Journal of Animal Ecology}. 81, 139-149.
 
-Colchero, F., Jones, O.R. and Rebke, M. BaSTA - a package to estimate age-specific mortality trends from incomplete mark-recapture data with covariates. \emph{Unpublished Manuscript}.
+Colchero, F., O.R. Jones and M. Rebke. (2012) BaSTA: an R package for Bayesian estimation of age-specific survival from incomplete mark-recapture/recovery data with covariates. \emph{Method in Ecology and Evolution}. 
 
 Cox, D. R., and Oakes D. (1984) \emph{Analysis of Survival Data}. Chapman and Hall, London.
 
@@ -245,10 +243,8 @@ new.dat  <- DataCheck(sim1, studyStart = 51,
 
 ## Run short version of BaSTA on the data:
 out      <- basta(sim1, studyStart = 51, studyEnd = 70, 
-            model = "GO", shape = "simple", covarsStruct = "fused", 
-            niter = 200, burnin = 11, thinning = 10, 
-            thetaJumps = c(0.025,0.01), gammaJumps = 0.01, 
-            progrPlots=TRUE)
+            niter = 200, burnin = 11, thinning = 10,  
+            progrPlots = TRUE)
 
 ## Print results:
 summary(out, digits = 3)
@@ -260,7 +256,7 @@ plot(out)
 plot(out, trace.name = "gamma")
 
 ## Plot survival and mortality curves:
-plot(out, plot.trace=FALSE)
+plot(out, plot.trace = FALSE)
 }
 
 \keyword{ methods }
