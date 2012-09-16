@@ -17,7 +17,7 @@ basta(object, \dots)
          thetaStart = NULL, thetaJumps = NULL, thetaPriors = NULL, 
          gammaStart = NULL, gammaJumps = NULL, gammaPriors = NULL, 
          nsim = 1, parallel = FALSE, ncpus = 2, lifeTable = TRUE, 
-         progrPlots = FALSE, updateJumps = TRUE, \dots)
+         progrPlots = FALSE, updateJumps = FALSE, \dots)
 }
 
 \arguments{
@@ -89,7 +89,7 @@ basta(object, \dots)
 \item{progrPlots }{A logical argument indicating wheter to draw progress plots or not. If \code{TRUE}, small plots are displayed showing the percent progress achieved for each MCMC simulation. }
   
 
-\item{updateJumps }{A logical argument indicating wheter to update jumps until an update rate of 0.2 is achieved. }
+\item{updateJumps }{A logical argument indicating wheter to update jumps until an update rate of 0.25 is achieved (see \code{details}). }
   
 
 \item{\dots }{Ignored.}
@@ -151,16 +151,18 @@ The \code{thinning} argument specifies the number of steps to be skipped in orde
 The number of parameters in \code{thetaStart} is a vector or matrix that defines the initial values for each \eqn{\theta} parameter of the mortality function. The number of parameters will depend on the model chosen with \code{model} (see above). If the number of parameters specified does not match the number of parameters inherent to the model and shape selected, the function returns an error. If no \code{thetaStart} argument is specified (i.e. default is \code{NULL}), the model randomly generates a set of initial parameters. 
 
 As described above, the number of parameters for the \code{gammaStart} argument (i.e. section b), namely the proportional hazards section, will be a function of the number of continuous covariates if argument \code{covarsStruct} is \dQuote{\code{fused}}, or to the total number of covariates when \code{covarsStruct} is \dQuote{\code{prop.haz}}.
+
+The \code{updateJumps} argument specifies weather to run a simulation to find appropriate jump standard deviations for theta and gamma parameters. If argument \dQuote{\code{nsim}} is set to 1, then the simulation runs with the update jumps routine active. If \dQuote{\code{nsim}} is larger than 1, then an initial simulation is ran to find apropriate jumps before the main analysis is ran. 
 }
 
 \value{  
 \item{coefficients }{A matrix with estimated coefficients (i.e. mean values per parameter on the thinned sequences after burnin), which includes standard errors, upper and lower 95\% credible intervals, update rates per parameter (commonly the same for all survival and proportional hazards parameters), serial autocorrelation on the thinned sequences and the potential scale reduction factor for convergence (see \code{Convergence} value below). }
 	
-\item{DIC }{Basic deviance information criterion (DIC) calculations to be used for model selection (Spiegelhalter \emph{et al.} 2002). These values should only be used a reference (see comments in Spiegelhalter \emph{et al.} 2002). A future version of the package will include routines for reversible jump Markov Chain Monte Carlo (RJMCMC, see King & Brooks 2002). If all or some of the simulations failed, then the returned value is \code{NULL}.}
+\item{DIC }{Basic deviance information criterion (DIC) calculations to be used for model selection (Spiegelhalter \emph{et al.} 2002). Small differences between values should only be used a reference (see comments in Spiegelhalter \emph{et al.} 2002). If all or some of the simulations failed, then the returned value is \dQuote{\code{Not calculated}}.}
 	
-\item{Convergence }{If requested, a matrix with convergence coefficients based on potential scale reduction as described by Gelman \emph{et al.} (2004). If only one simulation was ran, then the returned value is \code{NULL}.}
+\item{Convergence }{If requested, a matrix with convergence coefficients based on potential scale reduction as described by Gelman \emph{et al.} (2004). If only one simulation was ran, then the returned value is \dQuote{\code{Not calculated}}.}
   
-\item{KullbackLeibler }{If called by \code{\link{summary}}, list with Kullback-Leibler discrepancy matrices between pair of parameters for categorical covariates (McCulloch 1989, Burnham and Anderson 2001) and McCulloch's (1989) calibration measure. If only one simulation was ran or if no convergence is reached, then the returned value is \code{NULL}.}
+\item{KullbackLeibler }{If called by \code{\link{summary}}, list with Kullback-Leibler discrepancy matrices between pair of parameters for categorical covariates (McCulloch 1989, Burnham and Anderson 2001) and McCulloch's (1989) calibration measure. If only one simulation was ran or if no convergence is reached, then the returned value is \dQuote{\code{Not calculated}}.}
   
 \item{settings }{If called by \code{\link{summary}}, this is a vector indicating the number of iterations for each MCMC, the burn in sequence, the thinning interval, and the number of simulations that were run.}
 	
