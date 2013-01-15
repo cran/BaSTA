@@ -50,3 +50,4 @@ S3method(".SampleAges", "minAge")
 S3method(".SampleAges", "noMinAge")
 S3method(".SamplePiPars", "noPi")
 S3method(".SamplePiPars", "pi")
+
