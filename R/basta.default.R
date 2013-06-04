@@ -20,16 +20,11 @@ basta.default <- function(object, studyStart, studyEnd, minAge = 0,
   defTheta <- .SetDefaultTheta(algObj)
   CalcMort <- .DefineMort(algObj)
   CalcSurv <- .DefineSurv(algObj)
-  covObj <- .CreateCovObj(object, dataObj, algObj)#S; print(class(covObj))
+  covObj <- .CreateCovObj(object, dataObj, algObj)
   algObj$covStruc <- class(covObj)[1]
   userPars <- .CreateUserPar(covObj, argList)
   fullParObj <- .BuildFullParObj(covObj, defTheta, algObj, userPars, 
       dataObj)
-  jumps <- list()
-  jumps$theta <- fullParObj$theta$jump
-  if (fullParObj$class[1] == "theGam") {
-    jumps$gamma <- fullParObj$gamma$jump
-  }
   agesIni <- .PrepAgeObj(dataObj, algObj)
   parsIni <- .DefineIniParObj(fullParObj)
   parsCovIni <- .BuildParCovObj(covObj, parsIni)
@@ -37,6 +32,11 @@ basta.default <- function(object, studyStart, studyEnd, minAge = 0,
       parsIni, parsCovIni)
   postIni <- .BuildPostObj(agesIni, parsIni, parsCovIni, dataObj, 
       CalcSurv, priorAgeObj, fullParObj, covObj)
+  jumps <- list()
+  jumps$theta <- fullParObj$theta$jump
+  if (fullParObj$class[1] == "theGam") {
+    jumps$gamma <- fullParObj$gamma$jump
+  }
   Start <- Sys.time()
   if(updateJumps) {
     .jumpObjIni <- .PrepJumpObj(fullParObj, covObj)
@@ -93,8 +93,8 @@ basta.default <- function(object, studyStart, studyEnd, minAge = 0,
   bastaResults$settings <- c(niter, burnin, thinning, nsim)
   names(bastaResults$settings) <- c("niter", "burnin", "thinning", "nsim")
   bastaResults$modelSpecs <- 
-      c(unlist(algObj)[c("model", "shape", "covStruc", "minAge")],
-          paste(names(covObj$cat), collapse = ", "), 
+    c(model, shape, covarsStruct, minAge,
+        paste(names(covObj$cat), collapse = ", "), 
           paste(names(covObj$cont), collapse = ", "))
   names(bastaResults$modelSpecs) <- c("model", "shape", "Covar. structure", 
       "minAge", "Categorical", "Continuous")
@@ -114,6 +114,7 @@ basta.default <- function(object, studyStart, studyEnd, minAge = 0,
   }
   bastaResults$lifeTable <- .CalcLifeTable(bastaResults, lifeTable, object,
       covObj, algObj)
+  bastaResults$version <- packageDescription("BaSTA")$Version
   # Define class for output object:
   class(bastaResults) <- "basta"
   return(bastaResults)
