@@ -1,11 +1,11 @@
-981b8451fa180f4fc39fcaf3d77afa43 *DESCRIPTION
+070d27bf2b0355e743597b9f73c21966 *DESCRIPTION
 e57f1ff01ebf0567c9b8ab0bd512c4e0 *NAMESPACE
 e424eea7af1644e1a69dc8dfb2f30ea7 *R/CensusToCaptHist.R
 dc0cade550930556ee66bcef7e9f7387 *R/DataCheck.R
 cba8036e5139caccf6c4602c32ad0774 *R/MakeCovMat.R
 9d5cdbc55311e705246659b7275f7593 *R/MakeLifeTable.R
-3e11b2bfca89200915c6536605665ae5 *R/basta.R
-1ca3d8d3ff33d72f3321714c4b429760 *R/basta.default.R
+6e1acc22ba07cfe25b875a5b8f23d0eb *R/basta.R
+d55a34a08d2ff05c044d7f77af36cfb9 *R/basta.default.R
 3bb5f04a1ea7bddffb68e4ad286f106b *R/plot.basta.R
 c7cbe9651756a7352e62f8dc3bdc1a18 *R/print.basta.R
 b535847d08eda916ebcecdf9f771cf01 *R/summary.basta.R
@@ -14,7 +14,7 @@ b535847d08eda916ebcecdf9f771cf01 *R/summary.basta.R
 99d98a81ca158a292d2c99c9c078d0d4 *inst/CITATION
 c1ad640d59bed28ca369892773add9ff *inst/doc/BaSTAoverview.Rnw
 ed779ea02c612f0b5b4c89aaf8582be9 *inst/doc/BaSTAoverview.pdf
-217d24b2a6cf2e66464d1352513a705a *man/BaSTA-package.Rd
+99327d66634e50556f46b66712b9b216 *man/BaSTA-package.Rd
 15a59367113100e20da710eaf46a5788 *man/CensusToCaptHist.Rd
 b84adb23bc9449df40c132878da6a8a5 *man/DataCheck.Rd
 2e15bb0ecc7eea9dcc50ca1ff459c3c8 *man/MakeCovMat.Rd
