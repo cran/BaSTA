@@ -671,8 +671,7 @@ basta <-
     idOi <- dataObj$idNoB[dataObj$oi[dataObj$idNoB] == 0 & 
             ageObjNew$ages[dataObj$idNoB, 'birth'] - 
             ageObjNew$ages[dataObj$idNoB, 'death'] > 0] 
-    ageObjNew$ages[dataObj$idNoB[idOi], 'birth'] <-
-        ageObjNew$ages[dataObj$idNoB[idOi], 'death']
+    ageObjNew$ages[idOi, 'birth'] <- ageObjNew$ages[idOi, 'death']
   }
   if (dataObj$updD) {
     ageObjNew$ages[dataObj$idNoD, 'death'] <- 
