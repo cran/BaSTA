@@ -1,13 +1,19 @@
+# FILE NAME:   basta.default
+# AUTHOR:      Fernando Colchero
+# DATE:        07/Nov/2015
+# VERSION:     1.9.4
+# DESCRIPTION: This function estimates age-specific mortality from capture-
+#              recapture/recovery (CRR) data when a large proportion of (or all) 
+#              the records have unknown times of birth and death. It uses the 
+#              framework described by Colchero & Clark (2012) J Anim Ecol.
+# COMMENTS:    None
+# ============================================================================ #
 basta.default <- function(object, studyStart, studyEnd, minAge = 0, 
     model = "GO", shape = "simple", covarsStruct = "fused", niter = 11000, 
     burnin = 1001, thinning = 20, recaptTrans = studyStart, 
     nsim = 1, parallel = FALSE, ncpus = 2, lifeTable = TRUE, 
     updateJumps = TRUE, ...) {
   
-  # This function estimates age-specific mortality from capture-recapture/
-  # recovery (CRR) data when a large proportion of (or all) the records have
-  # unknown times of birth and death. It uses the framework described by
-  # Colchero & Clark (2012) J Anim Ecol.
   argList <- list(...)
   bastaIntVars <- c("algObj", "defTheta", "CalcMort", "CalcSurv", 
       "dataObj", "covObj", "userPars", "fullParObj", "agesIni", 
@@ -49,31 +55,20 @@ basta.default <- function(object, studyStart, studyEnd, minAge = 0,
   if (nsim > 1) {
     cat("Multiple simulations started...\n\n") 
     if (parallel) {
-      availPkgs <- installed.packages()
-      if (!is.element("snowfall", availPkgs)) {
-        warning("\nPackage 'snowfall' is not installed.\nSimulations ",
-            "will not be ran in parallel (computing time will ",
-            "be longer...)\n")
-        bastaOut <- lapply(1:nsim, .RunBastaMCMC, algObj, defTheta, 
-            CalcMort, CalcSurv, dataObj, covObj, userPars, fullParObj, 
-            agesIni, parsIni, priorAgeObj, parsCovIni, postIni, jumps)
-      } else {
-        opp <- options()
-        options(warn = -1)
-        require(snowfall)
-        sfInit(parallel = TRUE, cpus = ncpus)
-        sfExport(list = c(bastaIntVars, ".Random.seed"))
-#        sfSource("/Users/fernando/FERNANDO/PROJECTS/4.PACKAGES/BaSTA/workspace/developBasta/code/loadBaSTA.R")
-        sfLibrary("BaSTA", character.only = TRUE, warn.conflicts = FALSE)
-        sfLibrary(msm, warn.conflicts = FALSE)
-        bastaOut <- sfClusterApplyLB(1:nsim, .RunBastaMCMC, algObj, defTheta, 
-            CalcMort, CalcSurv, dataObj, covObj, userPars, fullParObj, 
-            agesIni, parsIni, priorAgeObj, parsCovIni, postIni, jumps)
-        sfRemoveAll(hidden = TRUE)
-        sfStop()
-        options(opp)
-      }
-    } else {
+			opp <- options()
+			options(warn = -1)
+			sfInit(parallel = TRUE, cpus = ncpus)
+			sfExport(list = c(bastaIntVars, ".Random.seed"))
+			sfLibrary("BaSTA", character.only = TRUE, 
+					warn.conflicts = FALSE)
+			bastaOut <- sfClusterApplyLB(1:nsim, .RunBastaMCMC, algObj,
+					defTheta, CalcMort, CalcSurv, dataObj, covObj, userPars, 
+					fullParObj, agesIni, parsIni, priorAgeObj, parsCovIni, postIni, 
+					jumps)
+			sfRemoveAll(hidden = TRUE)
+			sfStop()
+			options(opp)
+		} else {
       bastaOut <- lapply(1:nsim, .RunBastaMCMC, algObj, defTheta, 
           CalcMort, CalcSurv, dataObj, covObj, userPars, fullParObj, 
           agesIni, parsIni, priorAgeObj, parsCovIni, postIni, jumps)
@@ -90,7 +85,8 @@ basta.default <- function(object, studyStart, studyEnd, minAge = 0,
   cat(sprintf("Total MCMC computing time: %.2f %s.\n\n", compTime, 
           units(End - Start)))
   bastaResults <- .CalcDiagnost(bastaOut, algObj, covObj, defTheta, 
-      fullParObj, dataObj)
+      fullParObj, dataObj, parsIni, parsCovIni, agesIni, postIni, CalcSurv, 
+			priorAgeObj)
   bastaResults$settings <- c(niter, burnin, thinning, nsim)
   names(bastaResults$settings) <- c("niter", "burnin", "thinning", "nsim")
   bastaResults$modelSpecs <- 

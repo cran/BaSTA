@@ -46,10 +46,10 @@ summary.basta <-
     print.default(meanKLcalib, digits = digits)
   } else {
     if (object$set['nsim'] == 1) {
-      cat("KLDC was not calculated due to insufficient number",
+      cat("KLDC was not calculated due to insufficient number\n",
           " of simulations to estimate convergence.\n")
     } else {
-      cat("KLDC was not calculated due to lack of convergence,",
+      cat("KLDC was not calculated due to lack of convergence,\n",
           "or because covariates were not included in the model.\n")
     }
   }

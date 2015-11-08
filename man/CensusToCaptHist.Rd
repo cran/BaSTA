@@ -26,7 +26,7 @@ A one character string specifying which time interval should be used between cap
 }
 }
 \details{
-The \code{d} argument can be specified as an object of class \code{POSIXct} or \code{POSIXlt}, as a vector of integer time intervals or as a character string indicating the day, month and year. (e.g. \code{dd/mm/yyyy}, \code{mmddyyyy}, \code{mm-dd-yyyy} etc.). When \code{d} is of class \code{character} then argument \code{dformat} needs to be specified using the same conventions as in function \code{\link{format.POSIXct}} for objects of class \code{POSIXct} or \code{POSIXlt}.
+The \code{d} argument can be specified as an object of class \code{POSIXct} or \code{POSIXlt}, as a vector of integer time intervals or as a character string indicating the day, month and year. (e.g. \code{dd/mm/yyyy}, \code{mmddyyyy}, \code{mm-dd-yyyy} etc.). When \code{d} is of class \code{character} then argument \code{dformat} needs to be specified using the same conventions as in function \code{format.POSIXct} for objects of class \code{POSIXct} or \code{POSIXlt}.
 }
 
 \author{
@@ -37,11 +37,11 @@ Owen R. Jones \email{jones@demogr.mpg.de} and Maren Rebke \email{rebke@demogr.mp
 \code{\link{MakeCovMat}}, which formats a covariate matrix compatible with this output. 
 }
 \examples{
-id.vec     <- sort(sample(1:5, size = 15, replace = TRUE))
-d.vec      <- rep(0, length(id.vec))
+id.vec <- sort(sample(1:5, size = 15, replace = TRUE))
+d.vec <- rep(0, length(id.vec))
 for(i in unique(id.vec)){
-  svec     <- which(id.vec == i)
+  svec <- which(id.vec == i)
   d.vec[svec] <- sort(sample(1990:1995, length(svec)))
 }
-Y          <- CensusToCaptHist(ID = id.vec,  d = d.vec)
+Y <- CensusToCaptHist(ID = id.vec,  d = d.vec)
 }

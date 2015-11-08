@@ -12,27 +12,32 @@ These functions are all generic methods for class \code{basta}.
 \usage{
 \method{summary}{basta}(object, \dots)
 \method{print}{basta}(x, \dots)
-\method{plot}{basta}(x, plot.trace = TRUE, trace.name = "theta", \dots)
+\method{plot}{basta}(x, plot.trace = TRUE, trace.name = "theta", 
+    fancy = FALSE,\dots)
 }
 \arguments{
   \item{object }{An object of class \code{basta}.}
   
   \item{x }{An object of class \code{basta}.}
 
-  \item{plot.trace}{A logical argument. If \code{TRUE} the raw parameter traces are plotted, else, the predictive intervals for the resulting survival probability and mortality rates are plotted.}
+  \item{plot.trace }{A logical argument. If \code{TRUE} the raw parameter traces are plotted, else, the predictive intervals for the resulting survival probability and mortality rates are plotted.}
   
-  \item{trace.name }{Character string indicating the set of parameters or posteriors to be plotted. The options are: "\code{theta}" to plot the survival model parameters; "\code{gamma}" to plot the proportional hazards parameters (if it applies, else \code{plot.basta} returns an error); "\code{pi}" to plot the recapture probabilities; and "post" to plot the conditional posteriors for the parameters and for the latent ages at death, and the full posterior for the model.}
+  \item{trace.name }{Character string indicating the set of parameters or posteriors to be plotted. The options are: ``\code{theta}'' to plot the survival model parameters; ``\code{gamma}'' to plot the proportional hazards parameters (if it applies, else \code{plot.basta} returns an error); ``\code{pi}'' to plot the recapture probabilities; and "post" to plot the conditional posteriors for the parameters and for the latent ages at death, and the full posterior for the model.}
   
+  \item{fancy }{A logical argument indicating to plot a combined plot of trace densities and estimated vital rates.}
+
   \item{\dots }{Additional arguments passed to functions \code{print}, \code{summary} and \code{plot} (see details).}
 }
 \details{
-For objects of class \code{basta}, the \code{print} function returns three summary elements describing the model and its results, namely: \code{call}, \code{run}, \code{coefficients} and, if convergence was reached, the \code{DIC} values for model fit. \code{call} describes the basic model used (i.e. exponential, Gompertz, Weibull or logistic), the shape chosen, \dQuote{\code{simple}}, \dQuote{\code{Makeham}} or \dQuote{\code{bathtub}}, the covariate structure chosen, \dQuote{\code{fused}}, \dQuote{\code{prop.haz}} or \dQuote{\code{all.in.mort}} and which covariates (if any) were categorical and which continuous. Argument \code{digits} can be used for number formatting (see \code{\link{summary}}() or \code{\link{signif}}() for details).  
+For objects of class \code{basta}, the \code{print} function returns three summary elements describing the model and its results, namely: \code{call}, \code{run}, \code{coefficients} and, if convergence was reached, the \code{DIC} values for model fit. \code{call} describes the basic model used (i.e. exponential, Gompertz, Weibull or logistic), the shape chosen, \dQuote{\code{simple}}, \dQuote{\code{Makeham}} or \dQuote{\code{bathtub}}, the covariate structure chosen, \dQuote{\code{fused}}, \dQuote{\code{prop.haz}} or \dQuote{\code{all.in.mort}} and which covariates (if any) were categorical and which continuous. Argument \code{digits} can be used for number formatting (see \code{summary}() or \code{signif}() for details).  
 
 The summary element \code{coefficients} prints out the estimated coefficients for all parameters in the model, as well as their standard errors and 95\% upper and lower credible intervals. It also includes a measure of serial autocorrelation for each parameter calculated from the thinned parameter chains, an update rate per parameter, and the potential scale reduction factor for each parameter as a measure of convergence (Gelman \emph{et al.} 2004). 
 
 Function \code{summary} includes all the previous elements, as well as a summary description of the priors and jump standard deviations for all survival parameters, a calibration of the Kullback-Leibler discrepancy as a measure of parameter similarities for those parameters associated to categorical covariates (McCulloch 1989), and a measure of model fit based on the deviance information criterion (DIC) (Spiegelhalter \emph{et al.} 2002). 
 
 Function \code{plot} takes objects of class \code{basta} to create trace plots or, if the argument for \code{plot.trace} is set to \code{FALSE}, it plots estimated survival probabilities and mortality rates with their 95\% predictive intervals. If argument \code{plot.trace} is set to \code{FALSE}, argument \code{xlim} can be used to define a range of ages to visualize survival and mortality trends. Also, if logical argument \code{noCI} is set to \code{TRUE}, credible intervals around survival and mortality are not plotted, leaving only the mean trends. This can be handy when several categorical covariates have been evaluated and the plots get too crowded.  
+
+Other arguments for \code{plot} include \code{names.legend} to indicate alternative names for the legend of vital rates plots. Also, when \code{plot.trace} is \code{FALSE}, argument \code{xlim} can be changed to display only a subest of the support. When argument \code{noCI} is \code{TRUE}, then the credible intervals around the vital rates are not displayed.
 }
 
 \value{ 
@@ -66,7 +71,7 @@ Colchero, F. and J.S. Clark (2012) Bayesian inference on age-specific survival f
 Colchero, F., O.R. Jones and M. Rebke. (2012) BaSTA: an R package for Bayesian estimation of age-specific survival from incomplete mark-recapture/recovery data with covariates. \emph{Method in Ecology and Evolution}. DOI: 10.1111/j.2041-210X.2012.00186.x
 }
 \author{
-Fernando Colchero \email{colchero@demogr.mpg.de}, Owen R. Jones \email{jones@demogr.mpg.de} and Maren Rebke \email{rebke@demogr.mpg.de}
+Fernando Colchero \email{colchero@imada.sdu.dk}, Owen R. Jones \email{jones@biology.sdu.dk} and Maren Rebke \email{maren.rebke@avitec-research.de}
 }
 
 \seealso{
@@ -92,7 +97,33 @@ plot(sim1Out, trace.name = "pi")
 ## Plot predicted mortality and survival:
 plot(sim1Out, plot.trace = FALSE)
 
-## Plot predicted mortality and survival between 2 and 8 years of age:
+## Change the color for each covariate on 
+## the predicted vital rates:
+plot(sim1Out, plot.trace = FALSE, 
+     col = c("dark green", "dark blue"))
+
+## Change the color and the legend text:
+plot(sim1Out, plot.trace = FALSE, 
+     col = c("dark green", "dark blue"),
+     names.legend = c("Females", "Males"))
+
+## Plot predicted mortality and survival 
+## between 2 and 8 years of age:
 plot(sim1Out, plot.trace = FALSE, xlim = c(2, 8))
+
+## Plot predicted mortality and survival 
+## between 2 and 8 years of age without
+## credible intervals:
+plot(sim1Out, plot.trace = FALSE, xlim = c(2, 8), 
+     noCI = TRUE)
+
+## Plot parameter densities and predicted vital  
+## rates in the same plot (i.e. fancy):
+plot(sim1Out, fancy = TRUE)
+
+## Change colors and legend names for the 
+## "fancy" plot:
+plot(sim1Out, fancy = TRUE, col = c("dark green", "dark blue"),
+     names.legend = c("Females", "Males"))
 }
 

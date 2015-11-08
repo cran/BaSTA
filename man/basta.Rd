@@ -2,17 +2,19 @@
 \alias{basta}
 \alias{basta.default}
 \title{
-Parametric Bayesian estimation of age-specific survival for left-truncated and right-censored capture-recapture/recovery data.
+Parametric Bayesian estimation of age-specific survival for left-truncated and 
+right-censored capture-recapture/recovery data.
 }
 
 \description{
-This function performs multiple Markov Chain Monte Carlo (MCMC) simulations for the Bayesian estimation of age-specific mortality and survival trends when a large proportion of (or all) records have unknown times of birth and/or death. Survival parameters and unknown (i.e. latent) birth and death times are estimated, allowing the user to test a range of mortality patterns, and to test the effect of continuous and/or discrete covariates following Colchero and Clark's (2012) approach.}
+This function performs multiple Markov Chain Monte Carlo (MCMC) simulations for the Bayesian estimation of age-specific mortality and survival trends when a large proportion of (or all) records have unknown times of birth and/or death. Survival parameters and unknown (i.e. latent) birth and death times are estimated, allowing the user to test a range of mortality patterns, and to test the effect of continuous and/or discrete covariates following Colchero and Clark's (2012) approach.
+}
 
 \usage{
 basta(object, \dots)
 
-\method{basta}{default}(object, studyStart, studyEnd, minAge = 0, 
-    model = "GO", shape = "simple", covarsStruct = "fused", niter = 11000, 
+\method{basta}{default}(object, studyStart, studyEnd, minAge = 0, model = "GO", 
+    shape = "simple", covarsStruct = "fused", niter = 11000, 
     burnin = 1001, thinning = 20, recaptTrans = studyStart, 
     nsim = 1, parallel = FALSE, ncpus = 2, lifeTable = TRUE, 
     updateJumps = TRUE, \dots)
@@ -20,7 +22,7 @@ basta(object, \dots)
 
 \arguments{
   
-\item{object }{A \code{data.frame} to be used as an input data file for BaSTA. The first column is a vector of individual unique IDs, the second and third columns are birth and death years respectively. Columns 4-(nt-1) represent the observation window of nt years.  This is followed (optionally) by columns for categorical and continuous covariates (see \code{details}). }
+\item{object }{A \code{data.frame} to be used as an input data file for BaSTA. The first column is a vector of individual unique IDs, the second and third columns are birth and death years respectively. Columns \eqn{4, \dots, n_t-1} represent the observation window of \eqn{n_t} years.  This is followed (optionally) by columns for categorical and continuous covariates (see \code{details}). }
  
 \item{studyStart }{The first year of the study.}
   
@@ -28,9 +30,9 @@ basta(object, \dots)
   
 \item{minAge }{Age at which the analysis should start (see \code{details})}
   
-\item{model }{The underlying mortality model to be used. "EX" = exponential, "GO"= Gompertz, "WE" = Weibull and "LO" = logistic (see \code{details}).}
+\item{model }{The underlying mortality model to be used. \code{"EX"} = exponential,\code{"GO"} = Gompertz, \code{"WE"} = Weibull and \code{"LO"} = logistic (see \code{details}).}
   
-\item{shape }{The overall shape of the model. Values are: \code{simple} = no extra parameters added; \code{Makeham} = a constant parameter is added to the mortality rate; and \code{bathtub} = a Gompertz declining mortality for early ages and a constant parameter are added to the mortality model (see \code{details}).}
+\item{shape }{The overall shape of the model. Values are: \code{simple} = no extra parameters added; \code{Makeham} = a constant parameter is added to the mortality; and \code{bathtub} = a Gompertz declining mortality for early ages and a constant parameter are added to the mortality model (see \code{details}).}
   
 \item{covarsStruct }{Character string that indicates how covariates should be evaluated. The options are: \dQuote{\code{fused}}, which defines all categorical variables as covariates for each mortality parameter and all continuous covariates under a proportional hazards structure; \dQuote{\code{prop.haz}}, which puts all covariates under a proportional hazards structure; and \dQuote{\code{all.in.mort}} puts all covariates as a multilevel function of the mortality parameters (see \code{details}).}
   
@@ -47,7 +49,7 @@ basta(object, \dots)
 \item{parallel }{A logical argument indicating whether the multiple simulations should be run in parallel or not. If \code{TRUE}, package \pkg{snowfall} is called and multiple simulations are run in parallel. If \pkg{snowfall} is not installed, the model is ran in series.}
   
 \item{ncpus }{a numerical value that indicates the number of cpus to be used if \code{parallel} is \code{TRUE} and package \pkg{snowfall} is installed. The default is 2 cpus. If package pkg{snowfall} is not installed, the simulations are run in series.}
-  
+ 
 \item{lifeTable }{A logical argument indicating whether or not to produce life tables. If \code{TRUE}, a cohort life table is calculated using function \code{\link{MakeLifeTable}}.}
   
 \item{updateJumps }{A logical argument indicating wheter to update jump standard deviations (adaptive independent Metropolis) until an update rate of 0.25 is achieved (see \code{details}). }
@@ -58,48 +60,42 @@ basta(object, \dots)
 
 \details{
 
-To construct the input data \code{object} the function \code{\link{CensusToCaptHist}} can be used to build the capture-recapture matrix, while the covariate (design) matrix can be constructed with the  \code{\link{MakeCovMat}} function.
+To construct the input data \code{object} the function \code{\link{CensusToCaptHist}} can be used to build the capture-recapture matrix, while the covariate (design) matrix can be constructed with the \code{\link{MakeCovMat}} function.
 
-\code{basta} uses parametric mortality functions to estimate age-specific mortality (survival) from capture-recapture/recovery data. The mortality rate function describes how the risk of mortality changes with age, and is defined as \eqn{\mu(x | \theta)}, where \eqn{x} corresponds to age and \eqn{\theta} is a vector of parameters to be estimated. 
+\code{basta} uses parametric mortality functions to estimate age-specific mortality (survival) from capture-recapture/recovery data. The mortality function describes how the risk of mortality changes with age, and is defined as \eqn{\mu(x | \theta)}, where \eqn{x} corresponds to age and \eqn{\theta} is a vector of parameters to be estimated. 
 
-The \code{model} argument allows the user to choose between four basic mortality rate functions: 
+The \code{model} argument allows the user to choose between four basic mortality functions, namely (a) Exponential (\dQuote{\code{EX}}; Cox and Oakes 1974), with constant mortality with age specified as
 
-(a) Exponential (\dQuote{\code{EX}}; Cox and Oakes 1974), with constant mortality rate:
+\deqn{\mu_b(x | b) = b,}
 
-\deqn{\mu_b(x | b) = b}
-with \eqn{b > 0}.
+where \eqn{b > 0}, (b) the Gompertz mortality function (\dQuote{\code{GO}}; Gompertz 1925, Pletcher 1999), calculated as 
 
-(b) Gompertz (\dQuote{\code{GO}}; Gompertz 1925, Pletcher 1999): 
+\deqn{\mu_b(x | b) = exp(b_0 + b_1 x),}
 
-\deqn{\mu_b(x | b) = exp(b_0 + b_1 x)}
-with \eqn{-\infty < b_0, b_1 < \infty}.
+where \eqn{-\infty < b_0, b_1 < \infty}, (c) the Weibull mortality model (\dQuote{\code{WE}}; Pinder III \emph{et al.} 1978) calculated as
 
+\deqn{\mu_b(x | b) = b_0 b_1^{b_0} x^{b_0 -1},}
 
-(c) Weibull (\dQuote{\code{WE}}; Pinder III \emph{et al.} 1978):
+where \eqn{b_0, b_1 > 0}, and (d) the logistic mortality model (\dQuote{\code{LO}}; Pletcher 1999), calculated as 
 
-\deqn{\mu_b(x | b) = b_0 b_1^(b_0) x^(b_0 -1)}
-with \eqn{b_0, b_1 > 0}.
+\deqn{\mu_b(x | b) = exp(b_0 + b_1 x) / (1 + b_2 exp(b_0)/b_1 (exp(b_1 x)-1)),}
+where \eqn{b_0, b_1, b_2 > 0}.
 
+The \code{shape} argument allows the user to extend these models in order to explore more complex mortality shapes. The default value is \dQuote{\code{simple}} which leaves the model as defined above. With value \dQuote{\code{Makeham}}, a constant is added to the mortality, making the model equal to \eqn{\mu_0(x | \theta)= \mu_b(x | b) + c}, where \eqn{\theta = [c, b]}. With value \dQuote{\code{bathtub}}, concave shapes in mortality can be explored. This is achieved by adding a declining Gompertz term and a constant parameter to the basic mortality model, namely
 
-(d) logistic (\dQuote{\code{LO}}; Pletcher 1999):
+\deqn{\mu_0(x | \theta) = exp(a_0 - a_1 x) + c + \mu_b(x | b)},
 
-\deqn{\mu_b(x | b) = exp(b_0 + b_1 x) / (1 + b_2 exp(b_0)/b_1 (exp(b_1 x)-1))}
-with \eqn{b_0, b_1, b_2 > 0}.
+where \eqn{-\infty < a_0 < \infty}, \eqn{a_1 \leq 0} and \eqn{c \leq 0}.
 
-The \code{shape} argument allows the user to extend these models in order to explore more complex mortality shapes. The default value is \dQuote{\code{simple}} which leaves the model as defined above. With value \dQuote{\code{Makeham}}, a constant is added to the mortality rate, making the model equal to \eqn{\mu_0(x | \theta)= \mu_b(x | b) + c}, where \eqn{\theta = [c, b]}. With value \dQuote{\code{bathtub}}, concave shapes in mortality can be explored. This is achieved by adding a declining Gompertz term and a constant parameter to the basic mortality model, namely:
+To incorporate covariates into the inference process, the mortality model is further extended by including a proportional hazards structure, of the form 
 
-\deqn{\mu_0(x | \theta) = exp(a_0 - a_1 x) + c + \mu_b(x | b)}.
-with \eqn{-\infty < a_0 < \infty}, \eqn{a_1 \leq 0} and \eqn{c \leq 0}.
-
-To incorporate covariates into the inference process, the mortality model is further extended by including a proportional hazards structure, of the form: 
-
-\deqn{\mu(x | \theta, \Gamma, Z_a, Z_c) = \mu_0(x | \theta, Z_a) exp(\Gamma Z_c)}
+\deqn{\mu(x | \theta, \Gamma, Z_a, Z_c) = \mu_0(x | \theta, Z_a) exp(\Gamma Z_c)},
 
 where \eqn{\mu_0(x | \theta, Z_a)} represents the mortality section as defined above, while the second term \eqn{exp(\Gamma Z_c)} corresponds to the proportional hazards function.  \eqn{Z_a} and \eqn{Z_c} are covariate (design) matrices for categorical and continuous covariates, respectively.
 
 When covariates are included in the dataset, the \code{basta} function provides three different ways in which these can be evaluated by using argument \code{covarsStruct}: 
 
-1. \dQuote{\code{fused}} will make the mortality parameters linear functions of all categorical covariates (analogous to a generalised linear model (GLM) structure) and will put all continuous covariates under a proportional hazards structure. Thus, for a simple exponential mortality rate of the form \eqn{\mu_0(x | b) = b}, the parameter is equal to \eqn{b = b_0 + b_1 z_1 + \dots}, where \eqn{[b_0, \dots, b_k]} are paramters that link the mortality parameter \eqn{b} with the categorical covariates \eqn{[z_1,\dots,z_k]}.
+1. \dQuote{\code{fused}} will make the mortality parameters linear functions of all categorical covariates (analogous to a generalised linear model (GLM) structure) and will put all continuous covariates under a proportional hazards structure. Thus, for a simple exponential model with constant mortality of the form \eqn{\mu_0(x | b) = b}, the parameter is equal to \eqn{b = b_0 + b_1 z_1 + \dots, b_k z_k}, where \eqn{[b_0, \dots, b_k]} are paramters that link the mortality parameter \eqn{b} with the categorical covariates \eqn{[z_1,\dots,z_k]}.
 
 2. \dQuote{\code{prop.haz}} will put all covariates under a proportional hazards structure irrespective of the type of variable.
 
@@ -122,15 +118,15 @@ As described above, the number of parameters for \code{gammaStart}, \code{gammaJ
 \value{  
 \item{coefficients }{A matrix with estimated coefficients (i.e. mean values per parameter on the thinned sequences after burnin), which includes standard errors, upper and lower 95\% credible intervals, update rates per parameter, serial autocorrelation on the thinned sequences and the potential scale reduction factor for convergence (see \code{Convergence} value below). }
 	
-\item{DIC }{Basic deviance information criterion (DIC) calculations to be used for model selection (Spiegelhalter \emph{et al.} 2002). Small differences between values should only be used a reference (see comments in Spiegelhalter \emph{et al.} 2002). If all or some of the simulations failed, then the returned value is \dQuote{\code{Not calculated}}.}
+\item{DIC }{Basic deviance information criterion (DIC) calculations to be used for model selection (Spiegelhalter \emph{et al.} 2002, Celeux \emph{et al.} 2006). Small differences between values should only be used a reference (see comments in Spiegelhalter \emph{et al.} 2002). If all or some of the simulations failed, then the returned value is \dQuote{\code{Not calculated}}.}
 	
 \item{convergence }{If requested, a matrix with convergence coefficients based on potential scale reduction as described by Gelman \emph{et al.} (2004). If only one simulation was ran, then the returned value is \dQuote{\code{Not calculated}}.}
   
-\item{KullbackLeibler }{If called by \code{\link{summary}}, list with Kullback-Leibler discrepancy matrices between pair of parameters for categorical covariates (McCulloch 1989, Burnham and Anderson 2001) and McCulloch's (1989) calibration measure. If only one simulation was ran or if no convergence is reached, then the returned value is \dQuote{\code{Not calculated}}.}
+\item{KullbackLeibler }{If called by \code{summary}, list with Kullback-Leibler discrepancy matrices between pair of parameters for categorical covariates (McCulloch 1989, Burnham and Anderson 2001) and McCulloch's (1989) calibration measure. If only one simulation was ran or if no convergence is reached, then the returned value is \dQuote{\code{Not calculated}}.}
   
 \item{params }{If requested, a matrix with the thinned, converged parameter traces of all runs. This matrix is used to calculate quantiles for parameters, survival probability and mortality (see below).}
 
-\item{settings }{If called by \code{\link{summary}}, this is a vector indicating the number of iterations for each MCMC, the burn in sequence, the thinning interval, and the number of simulations that were run.}
+\item{settings }{If called by \code{summary}, this is a vector indicating the number of iterations for each MCMC, the burn in sequence, the thinning interval, and the number of simulations that were run.}
 	
 \item{modelSpecs }{Model specifications inidicating the \code{model}, the \code{shape}, the covariate structure and the minimum age that were specified by the user.}
 	
@@ -154,6 +150,8 @@ As described above, the number of parameters for \code{gammaStart}, \code{gammaJ
 \references{
 Burnham, K.P. and Anderson, D.R. (2001) Kullback-Leibler information as a basis for strong inference in ecological studies. \emph{Widlife Research}, 28, 111-119.
 
+Celeux, G., Forbes, F., Robert, C. P., and Titterington, D. M. (2006) Deviance information criteria for missing data models. \emph{Bayesian Analysis}, 1(4), 651-673. 
+
 Colchero, F. and J.S. Clark (2012) Bayesian inference on age-specific survival from capture-recapture data for censored and truncated data. \emph{Journal of Animal Ecology}. 81, 139-149.
 
 Colchero, F., O.R. Jones and M. Rebke. (2012) BaSTA: an R package for Bayesian estimation of age-specific survival from incomplete mark-recapture/recovery data with covariates. \emph{Method in Ecology and Evolution}. 3, 466-470. 
@@ -174,11 +172,11 @@ Spiegelhalter, D.J., Best, N.G., Carlin, B.P. and van der Linde, A. (2002) Bayes
 }
 
 \author{
-Fernando Colchero \email{colchero@demogr.mpg.de}, Owen R. Jones \email{jones@mpg.demogr.de}, and Maren Rebke \email{rebke@mpg.demogr.de}
+Fernando Colchero \email{colchero@imada.sdu.dk}, Owen R. Jones \email{jones@biology.sdu.dk}, and Maren Rebke \email{maren.rebke@avitec-research.de}
 }
 
 \seealso{
-\code{\link{summary.basta}}, \code{\link{print.basta}}, \code{\link{plot.basta}} to visualise summary outputs for objects of class \dQuote{\code{basta}}.
+\code{\link{summary.basta}}, \code{print.basta}, \code{plot.basta} to visualise summary outputs for objects of class \dQuote{\code{basta}}.
 \code{\link{CensusToCaptHist}} and \code{\link{MakeCovMat}} for raw data formatting.
 }
 \examples{
@@ -186,13 +184,11 @@ Fernando Colchero \email{colchero@demogr.mpg.de}, Owen R. Jones \email{jones@mpg
 data("sim1", package = "BaSTA")
 
 ## Check data consistency:
-new.dat  <- DataCheck(sim1, studyStart = 51, 
-            studyEnd = 70, autofix = rep(1,7))
+new.dat  <- DataCheck(sim1, studyStart = 51, studyEnd = 70, autofix = rep(1,7))
 
 ## Run short version of BaSTA on the data:
-out <- basta(sim1, studyStart = 51, studyEnd = 70, 
-             niter = 200, burnin = 11, thinning = 10,
-             updateJumps = FALSE)
+out <- basta(sim1, studyStart = 51, studyEnd = 70, niter = 200, burnin = 11, 
+             thinning = 10, updateJumps = FALSE)
 
 ## Print results:
 summary(out, digits = 3)
