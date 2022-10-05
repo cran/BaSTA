@@ -1,17 +1,17 @@
 CensusToCaptHist <-
     function(ID, d, dformat = "%Y", timeInt = "Y") {
   # Check data
-  if(class(ID) != "character") {
+  if(!inherits(ID, "character")) {
     ID <- as.character(ID)
   } 
   if (is.numeric(d)) {
     if (length(which(round(d) != d)) > 0) {
       stop("Please provide integer values or Date class ", 
-          "values for agrument 'd'.", call. = FALSE)
+          "values for argument 'd'.", call. = FALSE)
     } else {
       int <- d
     }
-  } else if (is.character(d) | class(d) == "Date") {
+  } else if (is.character(d) | inherits(d, "Date")) {
     if (is.character(d)) {
       d <- as.Date(d, format = dformat)
       if (length(which(is.na(d)))) {
@@ -39,19 +39,20 @@ CensusToCaptHist <-
         call. = FALSE)
   }  
   
-  # Add a dummy individual seen in all years,
-  # to cope with years where there are no recaptures
+  # Construct capture-recapture matrix:
   dint <- min(int):max(int)
-  ID  <- c(ID, rep("XdummyX", length(dint)))
-  int  <- c(int, dint)
+  ndint <- length(dint)
+  uniID <- sort(unique(ID))
+  n <- length(uniID)
+  mat <- matrix(0, n, ndint, dimnames = list(NULL, dint))
+  for (i in 1:ndint) {
+    idt <- which(d == dint[i])
+    idd <- which(uniID %in% ID[idt])
+    mat[idd, i] <- 1
+  }
+
+  # Create data.frame with ID and Y:
+  dmat <- data.frame(ID = uniID, mat)
   
-  mat <- as.matrix(table(ID, int))
-  mat[mat > 0] <- 1
-  ID <- rownames(mat)
-  mat <- as.data.frame(cbind(as.factor(ID), as.matrix(mat)))
-  colnames(mat) = c("ID", colnames(mat)[-1])
-  
-  # Remove the dummy row
-  mat <- mat[-which(rownames(mat) == "XdummyX"), ]
-  return(mat)
+  return(dmat)
 }

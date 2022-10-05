@@ -113,6 +113,8 @@ The number of parameters in \code{thetaStart}, \code{thetaJumps}, \code{thetaPri
 
 As described above, the number of parameters for \code{gammaStart}, \code{gammaJumps}, \code{gammaPriorMean} and \code{gammaPriorSd} arguments (i.e. section b), namely the proportional hazards section, will be a function of the number of continuous covariates if argument \code{covarsStruct} is \dQuote{\code{fused}}, or to the total number of covariates when \code{covarsStruct} is \dQuote{\code{prop.haz}}.
 
+Another additional argument is \code{returnAges}, which outputs a value \code{estAges}, which is a matrix with all estimated ages after the burnin and thinning. This matrix also includes ages that were known, thus each row corresponds to the individual in the same row as the original dataset.
+
 }
 
 \value{  
@@ -187,7 +189,7 @@ data("sim1", package = "BaSTA")
 new.dat  <- DataCheck(sim1, studyStart = 51, studyEnd = 70, autofix = rep(1,7))
 
 ## Run short version of BaSTA on the data:
-out <- basta(sim1, studyStart = 51, studyEnd = 70, niter = 200, burnin = 11, 
+out <- basta(sim1, studyStart = 51, studyEnd = 70, niter = 100, burnin = 11, 
              thinning = 10, updateJumps = FALSE)
 
 ## Print results:

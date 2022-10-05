@@ -51,7 +51,7 @@ Type 7: 0 = do nothing; 1 = replace death year element of observation matrix wit
   \item{type7 }{A vector of row numbers in the original data frame where the year of death is not a zero in the recapture matrix.}
 }
 
-\author{Owen R. Jones \email{jones@demogr.mpg.de},  Maren Rebke \email{rebke@demogr.mpg.de}, and Fernando Colchero \email{colchero@demogr.mpg.de}}
+\author{Owen R. Jones \email{jones@biology.sdu.dk} and Fernando Colchero \email{colchero@imada.sdu.dk}}
 
 \seealso{\code{\link{basta}}}
 

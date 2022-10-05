@@ -1,7 +1,7 @@
 # FILE NAME:   basta.default
 # AUTHOR:      Fernando Colchero
 # DATE:        07/Nov/2015
-# VERSION:     1.9.4
+# VERSION:     1.9.5
 # DESCRIPTION: This function estimates age-specific mortality from capture-
 #              recapture/recovery (CRR) data when a large proportion of (or all) 
 #              the records have unknown times of birth and death. It uses the 
@@ -96,7 +96,7 @@ basta.default <- function(object, studyStart, studyEnd, minAge = 0,
   names(bastaResults$modelSpecs) <- c("model", "shape", "Covar. structure", 
       "minAge", "Categorical", "Continuous")
   bastaResults <- .CalcQuants(bastaOut, bastaResults, defTheta, fullParObj, 
-      algObj, dataObj, CalcSurv, CalcMort, covObj, agesIni)
+      algObj, dataObj, CalcSurv, CalcMort, covObj, agesIni, argList)
   bastaResults$jumpPriors <- 
       cbind(c(jumps$theta, jumps$gamma), 
           c(fullParObj$theta$priorMean, fullParObj$gamma$priorMean), 
@@ -109,8 +109,8 @@ basta.default <- function(object, studyStart, studyEnd, minAge = 0,
     bastaResults$parsForPlot[[pp]] <- 
         bastaOut[[pp]]$par[seq(1, algObj$niter, algObj$thinning), ]
   }
-  bastaResults$lifeTable <- .CalcLifeTable(bastaResults, lifeTable, object,
-      covObj, algObj)
+  bastaResults$lifeTable <- .CalcLifeTable(bastaOut, lifeTable, object,
+      covObj, algObj, dataObj)
   bastaResults$version <- packageDescription("BaSTA")$Version
   # Define class for output object:
   class(bastaResults) <- "basta"
