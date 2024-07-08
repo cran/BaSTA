@@ -12,20 +12,25 @@ These functions are all generic methods for class \code{basta}.
 \usage{
 \method{summary}{basta}(object, \dots)
 \method{print}{basta}(x, \dots)
-\method{plot}{basta}(x, plot.trace = TRUE, trace.name = "theta", 
-    fancy = FALSE,\dots)
+\method{plot}{basta}(x, plot.type = "traces", trace.name = "theta",
+                       densities = FALSE, noCIs = FALSE, minSurv = NULL,
+                       \dots)
 }
 \arguments{
   \item{object }{An object of class \code{basta}.}
   
   \item{x }{An object of class \code{basta}.}
 
-  \item{plot.trace }{A logical argument. If \code{TRUE} the raw parameter traces are plotted, else, the predictive intervals for the resulting survival probability and mortality rates are plotted.}
+  \item{plot.type }{A character vector indicating the type of plot to be produced. Options are: \dQuote{\code{traces}} for the MCMC traces; \dQuote{\code{demorates}} for the resulting survival and mortality curves; and \dQuote{\code{gof}} for a comparison between the estimated parametric survival function and the life table \code{lx} variable. }
   
-  \item{trace.name }{Character string indicating the set of parameters or posteriors to be plotted. The options are: ``\code{theta}'' to plot the survival model parameters; ``\code{gamma}'' to plot the proportional hazards parameters (if it applies, else \code{plot.basta} returns an error); ``\code{pi}'' to plot the recapture probabilities; and "post" to plot the conditional posteriors for the parameters and for the latent ages at death, and the full posterior for the model.}
+  \item{trace.name }{Character string indicating the set of parameters or posteriors to be plotted. The options are: \dQuote{\code{theta}} to plot the survival model parameters; \dQuote{\code{gamma}} to plot the proportional hazards parameters (if it applies, else \code{plot.basta} returns an error); \dQuote{\code{pi}} to plot the recapture probabilities.}
   
-  \item{fancy }{A logical argument indicating to plot a combined plot of trace densities and estimated vital rates.}
-
+  \item{densities }{Logical indicating whether to plot the parameter posterior densities instead of the traces.}
+  
+  \item{noCIs }{Logical indicating whether the 95\% credible intervals should be included in the plot.}
+  
+  \item{minSurv }{Numerical value for the minimum survival level, acts as \code{xlim} using the survival as reference.}
+  
   \item{\dots }{Additional arguments passed to functions \code{print}, \code{summary} and \code{plot} (see details).}
 }
 \details{
@@ -35,7 +40,7 @@ The summary element \code{coefficients} prints out the estimated coefficients fo
 
 Function \code{summary} includes all the previous elements, as well as a summary description of the priors and jump standard deviations for all survival parameters, a calibration of the Kullback-Leibler discrepancy as a measure of parameter similarities for those parameters associated to categorical covariates (McCulloch 1989), and a measure of model fit based on the deviance information criterion (DIC) (Spiegelhalter \emph{et al.} 2002). 
 
-Function \code{plot} takes objects of class \code{basta} to create trace plots or, if the argument for \code{plot.trace} is set to \code{FALSE}, it plots estimated survival probabilities and mortality rates with their 95\% predictive intervals. If argument \code{plot.trace} is set to \code{FALSE}, argument \code{xlim} can be used to define a range of ages to visualize survival and mortality trends. Also, if logical argument \code{noCI} is set to \code{TRUE}, credible intervals around survival and mortality are not plotted, leaving only the mean trends. This can be handy when several categorical covariates have been evaluated and the plots get too crowded.  
+Function \code{plot} takes objects of class \code{basta} to create trace plots or, if the argument for \code{plot.type} is set to \dQuote{\code{demorates}}, it plots estimated survival probabilities and mortality rates with their 95\% predictive intervals. If argument \code{plot.trace} is set to \code{FALSE}, argument \code{xlim} can be used to define a range of ages to visualize survival and mortality trends. Also, if logical argument \code{noCI} is set to \code{TRUE}, credible intervals around survival and mortality are not plotted, leaving only the mean trends. This can be handy when several categorical covariates have been evaluated and the plots get too crowded.  
 
 Other arguments for \code{plot} include \code{names.legend} to indicate alternative names for the legend of vital rates plots. Also, when \code{plot.trace} is \code{FALSE}, argument \code{xlim} can be changed to display only a subest of the support. When argument \code{noCI} is \code{TRUE}, then the credible intervals around the vital rates are not displayed.
 }
@@ -43,9 +48,9 @@ Other arguments for \code{plot} include \code{names.legend} to indicate alternat
 \value{ 
 Function \code{summary}() outputs the folowing values:
 
-\item{coefficients }{A matrix with estimated coefficients (i.e. mean values per parameter on the thinned sequences after burnin), which includes standard errors, upper and lower 95\% credible intervals, update rates per parameter (commonly the same for all survival and proportional hazards parameters), serial autocorrelation on the thinned sequences and the potential scale reduction factor for convergence (see \code{Convergence} value below). }
+\item{coefficients }{Matrix with estimated coefficients (i.e. mean values per parameter on the thinned sequences after burnin), which includes standard errors, upper and lower 95\% credible intervals, update rates per parameter (commonly the same for all survival and proportional hazards parameters), serial autocorrelation on the thinned sequences and the potential scale reduction factor for convergence (see \code{Convergence} value below). }
   
-\item{DIC }{Basic deviance information criterion (DIC) calculations to be used for model selection (Spiegelhalter \emph{et al.} 2002).}
+\item{DIC }{Numeric vector with basic deviance information criterion (DIC) calculations to be used for model selection (Spiegelhalter \emph{et al.} 2002).}
 	
 \item{KullbackLeibler }{List with Kullback-Leibler discrepancy matrices between pair of parameters for categorical covariates (McCulloch 1989, Burnham and Anderson 2001) and McCulloch's (1989) calibration measure. If only one simulation was ran or if no convergence was reached, then the returned value is \dQuote{\code{Not calculated}}.}
 
@@ -71,7 +76,7 @@ Colchero, F. and J.S. Clark (2012) Bayesian inference on age-specific survival f
 Colchero, F., O.R. Jones and M. Rebke. (2012) BaSTA: an R package for Bayesian estimation of age-specific survival from incomplete mark-recapture/recovery data with covariates. \emph{Method in Ecology and Evolution}. DOI: 10.1111/j.2041-210X.2012.00186.x
 }
 \author{
-Fernando Colchero \email{colchero@imada.sdu.dk}, Owen R. Jones \email{jones@biology.sdu.dk} and Maren Rebke \email{maren.rebke@avitec-research.de}
+Fernando Colchero \email{fernando_colchero@eva.mpg.de}, Owen R. Jones \email{jones@biology.sdu.dk}
 }
 
 \seealso{
@@ -80,50 +85,51 @@ Fernando Colchero \email{colchero@imada.sdu.dk}, Owen R. Jones \email{jones@biol
 
 \examples{
 ## Load BaSTA output:
-data("sim1Out", package = "BaSTA")
+data("bastaCMRout", package = "BaSTA")
 
 ## Print summary output:
-summary(sim1Out)
+summary(bastaCMRout)
 
 ## Plot traces for mortality parameters (theta):
-plot(sim1Out)
+plot(bastaCMRout)
 
 ## Plot traces for proportional hazards parameters (gamma):
-plot(sim1Out, trace.name = "gamma")
+plot(bastaCMRout, trace.name = "gamma")
 
 ## Plot traces for recapture probability(ies) (pi):
-plot(sim1Out, trace.name = "pi")
+plot(bastaCMRout, trace.name = "pi")
 
 ## Plot predicted mortality and survival:
-plot(sim1Out, plot.trace = FALSE)
+plot(bastaCMRout, plot.type = "demorates")
 
 ## Change the color for each covariate on 
 ## the predicted vital rates:
-plot(sim1Out, plot.trace = FALSE, 
+plot(bastaCMRout, plot.type = "demorates", 
      col = c("dark green", "dark blue"))
 
 ## Change the color and the legend text:
-plot(sim1Out, plot.trace = FALSE, 
+plot(bastaCMRout, plot.type = "demorates", 
      col = c("dark green", "dark blue"),
      names.legend = c("Females", "Males"))
 
 ## Plot predicted mortality and survival 
 ## between 2 and 8 years of age:
-plot(sim1Out, plot.trace = FALSE, xlim = c(2, 8))
+plot(bastaCMRout, plot.trace = FALSE, xlim = c(2, 8))
 
 ## Plot predicted mortality and survival 
 ## between 2 and 8 years of age without
 ## credible intervals:
-plot(sim1Out, plot.trace = FALSE, xlim = c(2, 8), 
+plot(bastaCMRout, plot.trace = FALSE, xlim = c(2, 8), 
      noCI = TRUE)
 
 ## Plot parameter densities and predicted vital  
 ## rates in the same plot (i.e. fancy):
-plot(sim1Out, fancy = TRUE)
+plot(bastaCMRout, fancy = TRUE)
 
 ## Change colors and legend names for the 
 ## "fancy" plot:
-plot(sim1Out, fancy = TRUE, col = c("dark green", "dark blue"),
+plot(bastaCMRout, fancy = TRUE, col = c("dark green", "dark blue"),
      names.legend = c("Females", "Males"))
 }
 
+\keyword{methods}
