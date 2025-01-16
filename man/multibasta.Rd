@@ -1,67 +1,27 @@
-\name{basta}
-\alias{basta}
-\alias{basta.default}
-
+\name{multibasta}
+\alias{multibasta}
 \title{
- Parametric Bayesian estimation of age-specific survival for left-truncated and 
-right-censored capture-mark-recapture or census data.
+Function to run multiple BaSTA models on the same dataset.
 }
 
 \description{
- This function performs multiple Markov Chain Monte Carlo (MCMC) simulations for the Bayesian estimation of age-specific mortality and survival when a large proportion of records have unknown times of birth and/or death. Survival parameters and unknown (i.e. latent) birth (and death, for CMR data) times are estimated, allowing the user to test a range of mortality patterns, and to test the effect of continuous and/or discrete covariates following Colchero and Clark's (2012) general approach.
-}
+These functions allow users to run models with different functional forms on the same dataset, to perform model comparison and to visualize the results of the multiple runs.}
 
 \usage{
-basta(object, \dots)
-
-\method{basta}{default} (object, dataType = "CMR", model = "GO", 
-  shape = "simple",  studyStart = NULL, studyEnd = NULL, 
-  minAge = 0, covarsStruct = "fused",  formulaMort = NULL, 
-  formulaRecap = NULL, recaptTrans = studyStart,  niter = 22000, 
-  burnin = 2001, thinning = 40, nsim = 1, parallel = FALSE,  
-  ncpus = 2, updateJumps = TRUE, negSenescence = FALSE,  \dots)
+multibasta(object, dataType = "CMR", models, shapes, \dots)
 }
 
 \arguments{
-	\item{ object }{A \code{data.frame} to be used as an input data file for BaSTA. Note: BaSTA can take two types of datasets, namely capture-mark-recapture (CMR) or census data. See \code{details} for a description of the data structures. }
-
+  
+	\item{object }{A \code{data.frame} to be used as an input data file for BaSTA. Note: BaSTA can take two types of datasets, namely capture-mark-recapture (CMR) or census data. See \code{details} for a description of the data structures. }
+ 
 	\item{dataType }{A \code{character string} indicating if the data are for capture-mark-recapture (CMR) or census. Options are \dQuote{\code{CMR}} (default) or \dQuote{\code{census}}.}
 
-	\item{model }{The underlying mortality model to be used. \code{"EX"} = exponential,\code{"GO"} = Gompertz, \code{"WE"} = Weibull and \code{"LO"} = logistic (see \code{details}).}
+	\item{models }{A character vector specifying the underlying mortality models to be compared. \code{"EX"} = exponential,\code{"GO"} = Gompertz, \code{"WE"} = Weibull and \code{"LO"} = logistic (see \code{details}).}
 
-	\item{shape }{The overall shape of the model. Values are: \code{simple} = no extra parameters added; \code{Makeham} = a constant parameter is added to the mortality; and \code{bathtub} = a Gompertz declining mortality for early ages and a constant parameter are added to the mortality model (see \code{details}).}
+	\item{shapes }{A character vector with the overall shapes to be tested. Values are: \code{simple} = no extra parameters added; \code{Makeham} = a constant parameter is added to the mortality; and \code{bathtub} = a Gompertz declining mortality for early ages and a constant parameter are added to the mortality model (see \code{details}).}
 
-	\item{ studyStart }{Only required for \code{dataType =} \dQuote{\code{CMR}}, an integer indicating the first year of the study.}
-
-	\item{studyEnd }{Only required for \code{dataType =} \dQuote{\code{CMR}}, an integer indicating the last year of the study.}
-
-	\item{minAge }{Age at which the analysis should start (see \code{details}).}
-
-	\item{covarsStruct }{Character string that indicates how covariates should be evaluated. The options are: \dQuote{\code{fused}}, which defines all categorical variables as covariates for each mortality parameter and all continuous covariates under a proportional hazards structure; \dQuote{\code{prop.haz}}, which puts all covariates under a proportional hazards structure; and \dQuote{\code{all.in.mort}} puts all covariates as a multilevel function of the mortality parameters (see \code{details}).}
-
-	\item{ formulaMort }{An object of class \code{\link{formula}} specifying the covariates to be included on the mortality part of the model. Note that the syntax should not include a dependent variable. If \code{formulaMort = NULL}, then no covariates are included in the analysis. See \code{details}.}
-
-	\item{formulaRecap }{\emph{Not yet implemented}, an object of class \code{\link{formula}} specifying the covariates to be included on the recapture part of the model. Note that the syntax should not include a dependent variable. If \code{formulaMort = NULL}, then no covariates are included in the analysis.}
-
-	\item{recaptTrans }{A vector (of maximum length equal to the duration of the study) defining the recapture probability transition times (RPTP). These are points (years) where the recapture probability is thought to change.  The default setting is for the recapture probability to be constant throughout the study, so the \code{recaptTrans} is simply defined as a single element vector of the first year of the observation period (e.g. c(1985)). If recapture probabilities were known to change at year say, 1990, the RPTP should be defined as c(1985, 1990).}
-
-\item{niter }{The total number of MCMC steps.}
-  
-\item{burnin }{The number of iterations for the burn in (see \code{details}).}
-  
-\item{thinning }{The number of skipped MCMC steps to minimize serial autocorrelation (see \code{details}).}
-
-\item{nsim }{A numerical value for the number of simulations to be run.}
-  
-\item{parallel }{A logical argument indicating whether the multiple simulations should be run in parallel or not. If \code{TRUE}, package \pkg{snowfall} is called and multiple simulations are run in parallel. If \pkg{snowfall} is not installed, the model is ran in series.}
-  
-\item{ncpus }{a numerical value that indicates the number of cpus to be used if \code{parallel} is \code{TRUE} and package \pkg{snowfall} is installed. The default is 2 cpus. If package \pkg{snowfall} is not installed, the simulations are run in series.}
-
-	\item{updateJumps }{A logical argument indicating wheter to update jump standard deviations (adaptive independent Metropolis) until an update rate of 0.25 is achieved (see \code{details}). }
-
-	\item{negSenescence }{Logical indicating if negative senescence should be allowed, only applicable for \code{model} = \dQuote{\code{GO}} and \code{shape} = \dQuote{\code{Makeham}}.}
-
-	\item{\dots }{Additional arguments to be passed to function \code{basta} (see \code{details})}
+\item{\dots }{Additional arguments to be passed to function \code{basta} (see \code{details})}
 
 }
 
@@ -249,50 +209,14 @@ CV = \frac{\sqrt{\sigma^2}}{e_0},
 where \eqn{\sigma^2} is the variance in ages at death.
 }
 
-\value{
-	\item{params }{If requested, a matrix with the thinned, converged parameter traces of all runs. This matrix is used to calculate quantiles for parameters, survival probability and mortality (see below).}
 
-\item{theta }{If requested, a matrix with only the parameters of the mortality function after convergence and thinning.} 
-
-\item{coefficients }{A matrix with estimated coefficients (i.e. mean values per parameter on the thinned sequences after burnin), which includes standard errors, upper and lower 95\% credible intervals, update rates per parameter, serial autocorrelation on the thinned sequences and the potential scale reduction factor for convergence (see \code{Convergence} value below). }
-
-\item{names }{Names of all parameters}
-
-\item{DIC }{Basic deviance information criterion (DIC) calculations to be used for model selection (Spiegelhalter \emph{et al.} 2002, Celeux \emph{et al.} 2006). Small differences between values should only be used as a reference (see comments in Spiegelhalter \emph{et al.} 2002). If any of the parameter chains did not converge, then the returned value is \dQuote{\code{Not calculated}}.}
-
-\item{KullbackLeibler }{If called by \code{summary}, list with Kullback-Leibler discrepancy matrices between pair of parameters for categorical covariates (McCulloch 1989, Burnham and Anderson 2001) and McCulloch's (1989) calibration measure. If only one simulation was run or if no convergence is reached, then the returned value is \dQuote{\code{Not calculated}}.}
-
-\item{PS }{If requested, a list with summary statistics of the PDF of ages at death, including the life expectancy, lifespan inequality, lifespan equality, and Gini index. These are separated by categorical covariate and, if continuous covariates are provided, they are evaluated at the average value of each continous covariate. The list object provides a table with the mean and lower and upper 95\% credible intervals and vectors of the converged and thinned values for each variable.}
-
-\item{mort }{If requested or called by functions \code{plot} or \code{\link{plot.basta}} median and 95\% predictive intervals for the estimated mortality rates separated by categorical covariate and calculated at the mean for each continuous covariate, if provided.}
-
-\item{surv }{If requested or called by functions \code{plot} or \code{\link{plot.basta}} median and 95\% predictive intervals for the estimated survival probability, separated by categorical covariate and calculated at the mean for each continuous covariate, if provided.}
-
-\item{dens }{If requested, median and 95\% predictive intervals for the estimated probability density function of ages at death, separated by categorical covariate and calculated at the mean for each continuous covariate, if provided.}
-
-\item{x }{If requested, a vector of the ages used to calculate \code{mort}, \code{surv}, and \code{dens}.}
-
-\item{cuts }{An index vector per categorical covariate of the ages where the survival is larger than 0.05, used for display purposes when producing the plots with function \code{plot}.}
-
-\item{convergence }{If requested, a matrix with convergence coefficients based on potential scale reduction as described by Gelman \emph{et al.} (2004). If only one simulation was ran, then the returned value is \dQuote{\code{Not calculated}}.}
-
-\item{convmessage }{Only used with functions \code{summary} and \code{print} to indicate whether the parameter traces converged appropriately.}
-
-\item{runs }{A list object with the outputs of each individual MCMC run. Used with function \code{plot}.}
-
-\item{fullpar }{A list object with the input parameter information for the model, including starting values, priors, initial jumps, lower bound, among other. Used with functions \code{summary} and \code{print}.}
-
-\item{simthe }{A list object with information on the basic mortality model. Used with function \code{plot}.}
-
-\item{jumps }{A list object with the final jump standard deviations for each parameter.}
-
-\item{covs }{A list object with general information on the type of covariates, i.e., \code{cat} and \code{cont}, and the type of \code{covarStruct} used.}
-
-\item{settings }{If called by \code{summary}, this is a vector indicating the number of iterations for each MCMC, the burn in sequence, the thinning interval, and the number of simulations that were run.}
-
-\item{modelSpecs }{Model specifications inidicating the \code{model}, the \code{shape}, the covariate structure and the minimum age that were specified by the user.}
+\value{  
+\item{runs }{A \code{list} with the \code{basta} outputs for the models and shapes tested.}
 	
-\item{lifeTable }{A period life table calculated from the estimated times of birth (and death for \dQuote{\code{CMR}}) accounting for truncation and censoring.}
+\item{DICs }{A \code{data.frame} with the DIC values for each model, ranked from the model with lowest to the highest DIC.}
+	
+\item{models }{A summary table showing the models and shaped tested.}
+  
 }
 
 \references{
@@ -331,70 +255,31 @@ Siler, W. A (1979) competing-risk model for animal mortality. \emph{Ecology} 60,
 Spiegelhalter, D.J., Best, N.G., Carlin, B.P. and van der Linde, A. (2002) Bayesian measures of model complexity and fit. \emph{Journal of the Royal Statistical Society: Series B}, 64, 583-639.
 }
 
-\author{Fernando Colchero \email{fernando_colchero@eva.mpg.de}}
+\author{
+Fernando Colchero \email{fernando_colchero@eva.mpg.de}
+}
 
 \seealso{
-\code{\link{summary.basta}}, \code{print.basta}, \code{plot.basta} to visualise summary outputs for objects of class \dQuote{\code{basta}}. 
-
-\code{\link{bastaCMRdat}} and \code{\link{bastaCensDat}} for examples of input CMR and census datasets, respectively.
-
-%%\code{\link{CensusToCaptHist}} for raw capture-recapture matrix formatting.
+\code{\link{basta}}, as well as \code{\link{CensusToCaptHist}} for raw data formatting.
 }
 
 \examples{
-## ---------- #
-## CMR data:
-## ---------- #
 \donttest{
 ## Load data:
 data("bastaCMRdat", package = "BaSTA")
 
-## Check data consistency:
-checkedData <- DataCheck(bastaCMRdat, dataType = "CMR", 
-                              studyStart = 51, studyEnd = 70)
-
 ## Run short version of BaSTA on the data:
-out <- basta(bastaCMRdat, studyStart = 51, studyEnd = 70, 
-             formulaMort = ~ Sex + Weight - 1)
-}
+multiout <- multibasta(bastaCMRdat, studyStart = 51, studyEnd = 70, 
+                 models = c("GO", "WE"), shapes = "simple",
+                 niter = 100, burnin = 11, thinning = 10, 
+                 nsim = 1, updateJumps = FALSE, parallel = FALSE)
 
-## ------------- #
-## Census data:
-## ------------- #
-\donttest{
-## Load data:
-data("bastaCensDat", package = "BaSTA")
-
-## Check data consistency:
-checkedData <- DataCheck(bastaCensDat, dataType = "census")
-
-## Run short version of BaSTA on the data:
-out <- basta(bastaCensDat, dataType = "census", formulaMort = ~ Sex - 1)
-}
-
-\dontshow{
-data("bastaCensOut", package = "BaSTA")
-out <- bastaCensOut
-}
-
-## --------------------- #
-## Check BaSTA outputs:
-## --------------------- #
 ## Print results:
-summary(out, digits = 3)
+summary(multiout, digits = 3)
 
-## Plot traces for survival parameters:
-plot(out)
-
-## Plot posterior densities of survival parameters:
-plot(out, type = "densities")
-
-## Plot survival and mortality curves:
-plot(out, type = "demorates")
-
+}
 }
 
 \keyword{htest}
 \concept{Survival analysis}
 \concept{Bayesian inference}
-
